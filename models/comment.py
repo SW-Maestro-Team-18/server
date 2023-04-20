@@ -1,17 +1,13 @@
-from datetime import datetime
+from sqlalchemy import Column, DateTime,Integer, String
+from sqlalchemy.sql import func
 
-from pydantic import BaseModel
+from database import Base
 
 
-class Comment(BaseModel):
-    text: str
-    time: datetime
+class Comment(Base):
+    __tablename__ = 'comments'
 
-    # for documentation
-    class Config:
-        schema_extra = {
-            "example": {
-                "text": "밥 먹을 팟 구해요 인스타 아이디 : @git_jisu",
-                "time": datetime(2023, 4, 19, 20, 45)
-            }
-        }
+    id: Column(Integer, primary_key=True, index=True)
+    mbti_type: Column(String)
+    text: Column(String)
+    timestamp: Column(DateTime, default=func.now())
