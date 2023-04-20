@@ -6,22 +6,20 @@ from models import DbMBTI
 from schemas import MBTI
 
 
-router = APIRouter(
+mbti_router = APIRouter(
     tags=["mbti"]
 )
 
 mbti: list[str] = []
 
 
-@router.get("/count")
-async def get_all_count() -> int:
-    count = 0
-    for i in mbti:
-        count += i.count
-
-    return count
-
-
+# @router.get("/count")
+# async def get_all_count() -> int:
+#     count = 0
+#     for i in mbti:
+#         count += i.count
+#
+#     return count
 
 
 mbti_list = [
@@ -36,7 +34,9 @@ mbti_list = [
     "고객 독심술사",
     "잔디 개발자"
 ]
-@router.post('/', status_code=status.HTTP_201_CREATED)
+
+
+@mbti_router.post('/', status_code=status.HTTP_201_CREATED)
 def create(
         request: MBTI,
         db: Session = Depends(get_db)
@@ -58,3 +58,24 @@ def create(
     db.refresh(new_mbti)
 
     return new_mbti
+
+
+@mbti_router.get('/{type}')
+def show_mbti(
+        type: str,
+        db: Session = Depends(get_db)
+):
+    if type not in mbti_list:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail='Type of MBTI is not available.'
+        )
+
+    return db.query(DbMBTI).filter(DbMBTI.type == type).first()
+
+
+@mbti_router.get('/')
+def show_all_mbti(
+        db: Session = Depends(get_db)
+):
+    return db.query(DbMBTI).all()

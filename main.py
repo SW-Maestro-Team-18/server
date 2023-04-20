@@ -1,10 +1,19 @@
-import uvicorn
 from fastapi import FastAPI
-from routers import mbti_router
+import uvicorn
+
+from database.database import engine
+import models
+from routers import comment_router, mbti_router
+
 
 app = FastAPI()
 
+
 app.include_router(prefix="/mbti", router=mbti_router)
+app.include_router(prefix="/comment", router=comment_router)
+
+
+models.Base.metadata.create_all(bind=engine)
 
 
 if __name__ == "__main__":

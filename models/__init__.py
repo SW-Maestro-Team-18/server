@@ -1,1 +1,0 @@
-from .mbti import DbMBTI

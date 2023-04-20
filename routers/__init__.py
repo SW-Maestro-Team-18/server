@@ -1,1 +1,2 @@
-from routers.mbti import mbti_router
+from .comment import comment_router
+from .mbti import mbti_router
