@@ -4,8 +4,9 @@ from pydantic import BaseModel
 
 
 class Comment(BaseModel):
+    type: str
     text: str
-    time: datetime
+    # time: datetime
 
     # for documentation
     class Config:
@@ -15,3 +16,11 @@ class Comment(BaseModel):
                 "time": datetime(2023, 4, 19, 20, 45)
             }
         }
+        
+        
+class ShowComment(BaseModel):
+    class Config:
+        orm_mode = True
+    
+    text: str
+    

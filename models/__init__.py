@@ -1,2 +1,2 @@
-from models.mbti import MBTI
-from models.comment import Comment
+from models.mbti import MBTI, ShowCount
+from models.comment import Comment, ShowComment

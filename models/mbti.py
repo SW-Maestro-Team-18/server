@@ -22,3 +22,11 @@ class MBTI(BaseModel):
                 "comments" : []
             }
         }
+
+
+class ShowCount(BaseModel):
+    class Config:
+        orm_mode = True
+
+    type: str
+    count: int
