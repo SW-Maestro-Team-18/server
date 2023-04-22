@@ -1,7 +1,11 @@
 from typing import List
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
+from models import Comment, MBTI, ShowComment, ShowShareCount, ShowTestCount
+from models.choices import Choice
+from utils import get_mbti
 from models import MBTI, ShowShareCount, ShowTestCount
 
 mbti_router = APIRouter(
@@ -9,32 +13,61 @@ mbti_router = APIRouter(
 )
 
 # 일단 DB를 안쓴다고 가정
-# mbti: list[MBTI] = [
-#     MBTI(
-#         type="씨앗방 지박령",
-#         summary="쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
-#         description="씨앗방 지박령 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
-#         count=0
-#     ),
-#     MBTI(
-#         type="아이디어 자동생성기",
-#         summary="아이디어가 떠오르는 순간, 바로 개발을 시작한다!",
-#         description="아이디어 자동생성기 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
-#         count=0
-#     )
-# ]
-
-
-mbti: List[ShowTestCount] = [
-    ShowTestCount(type="씨앗방 지박령", count='1'),
-    ShowTestCount(type="아이디어 자동생성기", count='2'),
-    ShowTestCount(type="고독한 천재개발자", count='3'),
-    ShowTestCount(type="기술스택 스펀지밥", count='4'),
-    ShowTestCount(type="ㅋㅋ인간 레드불", count='5'),
-    ShowTestCount(type="챗봇 커뮤니케이터", count='6'),
-    ShowTestCount(type="얼리버드", count='7'),
-    ShowTestCount(type="고객 독심술사", count='8'),
-    ShowTestCount(type="잔디 개발자", count='9'),
+mbti: list[MBTI] = [
+    MBTI(
+        type="씨앗방 지박령",
+        summary="쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
+        description="씨앗방 지박령 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=2
+    ),
+    MBTI(
+        type="아이디어 자동생성기",
+        summary="아이디어가 떠오르는 순간, 바로 개발을 시작한다!",
+        description="아이디어 자동생성기 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=3
+    ),
+    MBTI(
+        type="씨앗방 지박령",
+        summary="쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
+        description="씨앗방 지박령 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=2
+    ),
+    MBTI(
+        type="아이디어 자동생성기",
+        summary="아이디어가 떠오르는 순간, 바로 개발을 시작한다!",
+        description="아이디어 자동생성기 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=3
+    ),
+    MBTI(
+        type="씨앗방 지박령",
+        summary="쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
+        description="씨앗방 지박령 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=2
+    ),
+    MBTI(
+        type="아이디어 자동생성기",
+        summary="아이디어가 떠오르는 순간, 바로 개발을 시작한다!",
+        description="아이디어 자동생성기 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=3
+    ),
+    MBTI(
+        type="아이디어 자동생성기",
+        summary="아이디어가 떠오르는 순간, 바로 개발을 시작한다!",
+        description="아이디어 자동생성기 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=3
+    ),
+    MBTI(
+        type="씨앗방 지박령",
+        summary="쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
+        description="씨앗방 지박령 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=2
+    ),
+    MBTI(
+        type="아이디어 자동생성기",
+        summary="아이디어가 떠오르는 순간, 바로 개발을 시작한다!",
+        description="아이디어 자동생성기 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
+        count=3
+    ),
 ]
 
 
@@ -96,4 +129,8 @@ async def link_count(
     for share in share_list:
         if share.type == type:
             return {"detail": share.count}
-        
+
+
+@mbti_router.post("/test/result", response_model=MBTI)
+async def mbti_result(choice: Choice):
+    return mbti[get_mbti(choice.choices)]

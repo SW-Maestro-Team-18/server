@@ -1,4 +1,15 @@
 # Test your FastAPI endpoints
 
-GET http://127.0.0.1:8000/mbti/count
+GET http://127.0.0.1:8000/count
 Accept: int
+
+###
+
+POST http://127.0.0.1:8000/test/result
+Content-Type: application/json
+
+{
+  "choices": [0,1,0,1,1,0,0,1,1]
+}
+
+###

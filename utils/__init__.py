@@ -1,0 +1,1 @@
+from utils.util import get_mbti
