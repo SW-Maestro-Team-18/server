@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from models import Comment, MBTI, ShowComment, ShowCount
+from models import Comment, MBTI, ShowComment, ShowShareCount, ShowTestCount
 
 mbti_router = APIRouter(
     tags=["mbti"]
@@ -26,16 +26,30 @@ mbti_router = APIRouter(
 # ]
 
 
-mbti: List[ShowCount] = [
-    ShowCount(type="씨앗방 지박령", count='1'),
-    ShowCount(type="아이디어 자동생성기", count='2'),
-    ShowCount(type="고독한 천재개발자", count='3'),
-    ShowCount(type="기술스택 스펀지밥", count='4'),
-    ShowCount(type="ㅋㅋ인간 레드불", count='5'),
-    ShowCount(type="챗봇 커뮤니케이터", count='6'),
-    ShowCount(type="얼리버드", count='7'),
-    ShowCount(type="고객 독심술사", count='8'),
-    ShowCount(type="잔디 개발자", count='9'),
+mbti: List[ShowTestCount] = [
+    ShowTestCount(type="씨앗방 지박령", count='1'),
+    ShowTestCount(type="아이디어 자동생성기", count='2'),
+    ShowTestCount(type="고독한 천재개발자", count='3'),
+    ShowTestCount(type="기술스택 스펀지밥", count='4'),
+    ShowTestCount(type="ㅋㅋ인간 레드불", count='5'),
+    ShowTestCount(type="챗봇 커뮤니케이터", count='6'),
+    ShowTestCount(type="얼리버드", count='7'),
+    ShowTestCount(type="고객 독심술사", count='8'),
+    ShowTestCount(type="잔디 개발자", count='9'),
+]
+
+
+# mbti link count
+share_list: List[ShowShareCount] = [
+    ShowShareCount(type="씨앗방 지박령", count='11'),
+    ShowShareCount(type="아이디어 자동생성기", count='22'),
+    ShowShareCount(type="고독한 천재개발자", count='33'),
+    ShowShareCount(type="기술스택 스펀지밥", count='44'),
+    ShowShareCount(type="ㅋㅋ인간 레드불", count='55'),
+    ShowShareCount(type="챗봇 커뮤니케이터", count='66'),
+    ShowShareCount(type="얼리버드", count='77'),
+    ShowShareCount(type="고객 독심술사", count='88'),
+    ShowShareCount(type="잔디 개발자", count='99'),
 ]
 
 
@@ -57,7 +71,7 @@ async def get_all_count():
     return {"detail": count}
 
 
-@mbti_router.get("/test/rank", response_model=List[ShowCount])
+@mbti_router.get("/test/rank", response_model=List[ShowTestCount])
 async def get_rank():
     count_list: List = []
     for i in mbti:
@@ -105,3 +119,24 @@ async def get_comment(type: str, num_of_comments: int):
             return comment_list
 
     return comment_list
+
+
+# 링크 공유 관련
+@mbti_router.post("/share")
+async def plus_link_count(
+    type: str
+):
+    for share in share_list:
+        if share.type == type:
+            share.count += 1
+            return 'Done'
+
+
+@mbti_router.get("/share/{type}")
+async def link_count(
+    type: str
+):
+    for share in share_list:
+        if share.type == type:
+            return {"detail": share.count}
+        

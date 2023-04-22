@@ -4,12 +4,13 @@ from pydantic import BaseModel
 from models.comment import Comment
 
 
+# link count 추가
 class MBTI(BaseModel):
     type: str
     summary: str
     description: str
     count: int
-    comments: List[Comment]
+    # comments: List[Comment]
 
     # for documentation
     class Config:
@@ -24,9 +25,18 @@ class MBTI(BaseModel):
         }
 
 
-class ShowCount(BaseModel):
+class ShowTestCount(BaseModel):
     class Config:
         orm_mode = True
 
     type: str
     count: int
+
+
+class ShowShareCount(BaseModel):
+    class Config:
+        orm_mode = True
+
+    type: str
+    count: int
+    
