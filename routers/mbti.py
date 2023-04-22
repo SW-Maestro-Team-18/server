@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 
 from models import MBTI, ShowShareCount, ShowTestCount
 
@@ -77,25 +76,6 @@ async def get_count_of_mbti(type: str):
     for i in mbti:
         if i.type == type:
             return {"detail": i.count}
-
-
-# @mbti_router.get("/count")
-# async def get_all_count() -> int:
-#     count = int
-#     for i in mbti:
-#         count.value += i.count
-#
-#     return count
-
-
-#
-# @mbti_router.get("/count_each")
-# async def get_all_count() -> int:
-#     count_list: List = []
-#     for i in mbti:
-#         count_list.append(i.count)
-#
-#     return count_list
 
 
 # 링크 공유 관련
