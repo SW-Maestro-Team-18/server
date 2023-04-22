@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from models import Comment, MBTI, ShowComment, ShowShareCount, ShowTestCount
+from models import MBTI, ShowShareCount, ShowTestCount
 
 mbti_router = APIRouter(
     tags=["mbti"]
@@ -53,15 +53,6 @@ share_list: List[ShowShareCount] = [
 ]
 
 
-# going to be sorted by timestamp
-comments: List[Comment] = [
-    Comment(type="씨앗방 지박령", text="이 분들 씻고 다니시는 거죠?"),
-    Comment(type="씨앗방 지박령", text="냄새나요"),
-    Comment(type="씨앗방 지박령", text="꿀단지라도 묻어뒀나봐요"),
-    Comment(type="씨앗방 지박령", text="저예요 저!"),
-]
-
-
 @mbti_router.get("/count")
 async def get_all_count():
     count = 0
@@ -107,20 +98,6 @@ async def get_count_of_mbti(type: str):
 #     return count_list
 
 
-# 커뮤니티에 넣을 comment
-@mbti_router.get("/get_comment/{type}_{num_of_comments}", response_model=List[ShowComment])
-async def get_comment(type: str, num_of_comments: int):
-    comment_list = []
-    for comment in comments:
-        if comment.type == type:
-            comment_list.append(comment)
-        
-        if len(comment_list) >= num_of_comments:
-            return comment_list
-
-    return comment_list
-
-
 # 링크 공유 관련
 @mbti_router.post("/share")
 async def plus_link_count(
@@ -129,7 +106,7 @@ async def plus_link_count(
     for share in share_list:
         if share.type == type:
             share.count += 1
-            return 'Done'
+            return {'datail': 'Done'}
 
 
 @mbti_router.get("/share/{type}")
