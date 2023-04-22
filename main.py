@@ -1,13 +1,15 @@
 import uvicorn
 from fastapi import FastAPI
 
-from routers import mbti_router
+from routers import comment_router, mbti_router, question_router
 
 
 app = FastAPI()
 
 
 app.include_router(router=mbti_router)
+app.include_router(prefix= '/comment', router=comment_router)
+app.include_router(router=question_router)
 # app.include_router(prefix="/mbti", router=mbti_router)
 
 
