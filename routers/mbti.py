@@ -3,17 +3,16 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from models import Comment, MBTI, ShowComment, ShowShareCount, ShowTestCount
-from models.choices import Choice
+from models import Choice, Comment, MBTI, ShowComment, ShowShareCount, ShowTestCount
 from utils import get_mbti
-from models import MBTI, ShowShareCount, ShowTestCount
+from models import MBTI, ShowMBTI, ShowShareCount, ShowTestCount
 
 mbti_router = APIRouter(
-    tags=["mbti"]
+    tags=["MBTI"]
 )
 
 # 일단 DB를 안쓴다고 가정
-mbti: list[MBTI] = [
+mbti: List[MBTI] = [
     MBTI(
         type="씨앗방 지박령",
         summary="쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
@@ -86,7 +85,7 @@ share_list: List[ShowShareCount] = [
 
 
 @mbti_router.get("/count")
-async def get_all_count():
+async def get_all_testcount():
     count = 0
     for i in mbti:
         count += i.count
@@ -95,7 +94,7 @@ async def get_all_count():
 
 
 @mbti_router.get("/test/rank", response_model=List[ShowTestCount])
-async def get_rank():
+async def get_rank_of_mbti():
     count_list: List = []
     for i in mbti:
         count_list.append(i)
@@ -105,7 +104,7 @@ async def get_rank():
 
 
 @mbti_router.get("/test/count/{type}")
-async def get_count_of_mbti(type: str):
+async def get_testcount_of_mbti(type: str):
     for i in mbti:
         if i.type == type:
             return {"detail": i.count}
@@ -123,7 +122,7 @@ async def plus_link_count(
 
 
 @mbti_router.get("/share/{type}")
-async def link_count(
+async def get_sharecount(
     type: str
 ):
     for share in share_list:
@@ -131,6 +130,6 @@ async def link_count(
             return {"detail": share.count}
 
 
-@mbti_router.post("/test/result", response_model=MBTI)
+@mbti_router.post("/test/result", response_model=ShowMBTI)
 async def mbti_result(choice: Choice):
-    return mbti[get_mbti(choice.choices)]
+    return mbti[get_mbti(choice)]

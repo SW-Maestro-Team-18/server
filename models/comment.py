@@ -22,11 +22,18 @@ class Comment(BaseModel):
         
         
 class ShowComment(BaseModel):
-    class Config:
-        orm_mode = True
-    
     type: str
     text: str
+    
+    class Config:
+        orm_mode = True
+        
+        schema_extra = {
+            "example": {
+                "type": "씨앗방 지박령",
+                "text": "밥 먹을 팟 구해요 인스타 아이디 : @git_jisu"
+            }
+        }
     
     
 class CommentCreate(Comment):

@@ -6,7 +6,8 @@ from models import Comment, CommentCreate, CommentDelete, ShowComment
 
 
 comment_router = APIRouter(
-    tags=["comments"]
+    prefix='/comment',
+    tags=["Comment"]
 )
 
 
@@ -20,8 +21,8 @@ comments: List[Comment] = [
 
 
 # 커뮤니티에 넣을 comment
-@comment_router.get("/get_comment/{type}_{num_of_comments}", response_model=List[ShowComment])
-async def get_comment(type: str, num_of_comments: int):
+@comment_router.get("/{type}/{num_of_comments}", response_model=List[ShowComment])
+async def get_comment_of_type_with_limit_num(type: str, num_of_comments: int):
     comment_list = []
     for comment in comments:
         if comment.type == type:
@@ -33,12 +34,12 @@ async def get_comment(type: str, num_of_comments: int):
     return comment_list
 
 
-@comment_router.get("/all_comment/{num_of_comments}", response_model=List[ShowComment])
-async def get_all_comment(num_of_comments: int):
+@comment_router.get("/all/{num_of_comments}", response_model=List[ShowComment])
+async def get_all_comment_with_limit_num(num_of_comments: int):
     return comments[:num_of_comments]
 
 
-@comment_router.post('/new', response_model=Comment, status_code=status.HTTP_201_CREATED)
+@comment_router.post('/new', response_model=ShowComment, status_code=status.HTTP_201_CREATED)
 async def create_comment(
     request: CommentCreate
 ):
@@ -55,7 +56,7 @@ async def create_comment(
 
 
 @comment_router.post('/delete', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_comment(
+async def delete_comment_by_id(
     request: CommentDelete
 ):
     for idx, comment in enumerate(comments):

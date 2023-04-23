@@ -9,34 +9,70 @@ class MBTI(BaseModel):
     type: str
     summary: str
     description: str
-    count: int
-    # comments: List[Comment]
-
-    # for documentation
-    class Config:
-        schema_extra = {
-            "example": {
-                "type" : "씨앗방 지박령",
-                "summary" : "쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
-                "description" : "씨앗방 지박령 캐릭터를 설명하는 설명글입니다. 이 공간에는 짧은 내용의 캐릭터 설명이 들어갑니다.",
-                "count" : 1,
-                "comments" : []
-            }
-        }
+    count: int    
 
 
-class ShowTestCount(BaseModel):
-    class Config:
-        orm_mode = True
-
+class ShowMBTI(MBTI):
     type: str
-    count: int
-
-
-class ShowShareCount(BaseModel):
+    summary: str
+    description: str
+    
     class Config:
         orm_mode = True
-
+        
+        schema_extra = {
+                "example": {
+                    "type" : "씨앗방 지박령",
+                    "summary": "쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
+                    "description": "설명"
+                }
+        }
+        
+        error_msg_templates = {}
+    
+    
+class ShowTestCount(BaseModel):
     type: str
     count: int
     
+    class Config:
+        orm_mode = True
+        
+        schema_extra = {
+            "example": {
+                "type" : "씨앗방 지박령",
+                "testcount": "1"
+            }
+        }
+        
+        error_msg_templates = {}
+
+
+class ShowShareCount(BaseModel):
+    type: str
+    count: int
+    
+    class Config:
+        orm_mode = True
+        
+        schema_extra = {
+            "example": {
+                "type" : "씨앗방 지박령",
+                "sharecount": "11"
+            }
+        }
+        
+        error_msg_templates = {}
+
+
+class Choice(BaseModel):
+    choices: List[int]
+    
+    class Config:
+        orm_mode = True
+        
+        schema_extra = {
+            "example": {
+                "choices" : "[0,1,0,1,1,0,0,1,1]"
+            }
+        }
