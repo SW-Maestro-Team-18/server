@@ -55,17 +55,22 @@ async def delete_comment_by_id(
 
 @comment_router.get('/all', response_model=List[ShowComment])
 async def get_comment_all_with_limit_num(
+    page: int = 0,
     num_of_comments: int = 5,
     db: Session = Depends(get_db)
 ):
-    return db.query(DbComment).order_by(DbComment.datetime.desc()).all()[:num_of_comments]
+    offset = page * 5
+    return db.query(DbComment).order_by(DbComment.datetime.desc(), DbComment.id.desc()).all()[offset:offset+num_of_comments]
 
 
 @comment_router.get("/{type_id}", response_model=List[ShowComment])
 async def get_comment_of_type_with_limit_num(
     type_id: int, 
+    page: int = 0,
     num_of_comments: int = 3,
     db: Session = Depends(get_db)
-):
+):  
+    offset = page * 3
     return db.query(DbComment).filter(DbComment.type_id == type_id) \
-        .order_by(DbComment.datetime.desc()).all()[:num_of_comments]
+        .order_by(DbComment.datetime.desc()).all()[offset:offset+num_of_comments]
+        

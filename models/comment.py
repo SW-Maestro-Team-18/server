@@ -25,7 +25,7 @@ class ShowComment(BaseModel):
                 "datetime": "2023-04-24T13:03:23"
             }
         }
-    
+            
     
 class CommentCreate(Comment):
     password: str = '1234'
