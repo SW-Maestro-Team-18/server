@@ -1,13 +1,10 @@
 from typing import List
 from pydantic import BaseModel
 
-from models.comment import Comment
-
 
 # link count 추가
 class MBTI(BaseModel):
     type: str
-    summary: str
     description: str
     
     class Config:
@@ -16,7 +13,6 @@ class MBTI(BaseModel):
         schema_extra = {
             "example": {
                 "type" : "씨앗방 지박령",
-                "summary": "쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
                 "description": "설명" 
             }
         }

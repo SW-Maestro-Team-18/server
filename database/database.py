@@ -10,7 +10,6 @@ class DbMBTI(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
-    summary = Column(String)
     description = Column(String)
     testcount = Column(Integer, default=0)
     sharecount = Column(Integer, default=0)
@@ -22,8 +21,9 @@ class DbComment(Base):
     __tablename__ = 'comments'
     
     id = Column(Integer, primary_key=True, index=True)
-    mbti_id = Column(String, ForeignKey('mbti.id')) 
+    type_id = Column(String, ForeignKey('mbti.id')) 
     text = Column(String)
+    password = Column(String)
     datetime = Column(DateTime, default=func.now())
     
     mbti = relationship('DbMBTI', back_populates='items')

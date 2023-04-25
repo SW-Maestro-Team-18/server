@@ -4,36 +4,26 @@ from pydantic import BaseModel
 
 
 class Comment(BaseModel):
-    id: int
-    type: str
+    type_id: int
     text: str
-    # time: datetime
 
     # for documentation
-    class Config:
+    class Config:        
         schema_extra = {
             "example": {
-                "id": "123",
-                "type": "씨앗방 지박령",
+                "type_id": "1",
                 "text": "밥 먹을 팟 구해요 인스타 아이디 : @git_jisu",
                 "password": "1234"
             }
         }
         
         
-class ShowComment(BaseModel):
-    type: str
-    text: str
+class ShowComment(Comment):
+    id: int
+    datetime: datetime
     
     class Config:
         orm_mode = True
-        
-        schema_extra = {
-            "example": {
-                "type": "씨앗방 지박령",
-                "text": "밥 먹을 팟 구해요 인스타 아이디 : @git_jisu"
-            }
-        }
     
     
 class CommentCreate(Comment):
@@ -52,7 +42,7 @@ class CommentDelete(BaseModel):
         
         schema_extra = {
             "example": {
-                "id": "123",
+                "id": "1",
                 "password": "1234"
             }
         }
