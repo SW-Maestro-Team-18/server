@@ -1,15 +1,15 @@
 from typing import List
 
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 
-from models import Choice, Comment, MBTI, ShowComment, ShowShareCount, ShowTestCount
+from database import get_db
+from database.database import DbMBTI
+from models import *
 from utils import get_mbti
-from models import MBTI, ShowMBTI, ShowShareCount, ShowTestCount
 
-mbti_router = APIRouter(
-    tags=["MBTI"]
-)
+mbti_router = APIRouter()
 
 # 일단 DB를 안쓴다고 가정
 mbti: List[MBTI] = [
@@ -70,66 +70,96 @@ mbti: List[MBTI] = [
 ]
 
 
-# mbti link count
-share_list: List[ShowShareCount] = [
-    ShowShareCount(type="씨앗방 지박령", count='11'),
-    ShowShareCount(type="아이디어 자동생성기", count='22'),
-    ShowShareCount(type="고독한 천재개발자", count='33'),
-    ShowShareCount(type="기술스택 스펀지밥", count='44'),
-    ShowShareCount(type="ㅋㅋ인간 레드불", count='55'),
-    ShowShareCount(type="챗봇 커뮤니케이터", count='66'),
-    ShowShareCount(type="얼리버드", count='77'),
-    ShowShareCount(type="고객 독심술사", count='88'),
-    ShowShareCount(type="잔디 개발자", count='99'),
-]
+@mbti_router.get("/count", tags=['count'])
+async def get_all_testcount_sum(db: Session = Depends(get_db)):
+    return {'detail': db.query(func.sum(DbMBTI.testcount)).first()[0]}
 
 
-@mbti_router.get("/count")
-async def get_all_testcount():
-    count = 0
-    for i in mbti:
-        count += i.count
-
-    return {"detail": count}
+@mbti_router.get("/test/rank", response_model=List[ShowTestCount], tags=['count'])
+async def get_rank_of_mbti(
+    db: Session = Depends(get_db)
+):  
+    return db.query(DbMBTI).order_by(DbMBTI.testcount.desc()).all()
 
 
-@mbti_router.get("/test/rank", response_model=List[ShowTestCount])
-async def get_rank_of_mbti():
-    count_list: List = []
-    for i in mbti:
-        count_list.append(i)
-
-    count_list.sort(key=lambda mbti: mbti.count, reverse=True)
-    return count_list
-
-
-@mbti_router.get("/test/count/{type}")
-async def get_testcount_of_mbti(type: str):
-    for i in mbti:
-        if i.type == type:
-            return {"detail": i.count}
+@mbti_router.get("/test/count/{type_id}", response_model=ShowTestCount, tags=['count'])
+async def get_testcount_of_mbti(
+    type_id: int,
+    db: Session = Depends(get_db)
+):
+    return db.query(DbMBTI).filter(DbMBTI.id == type_id).first()
 
 
 # 링크 공유 관련
-@mbti_router.post("/share")
-async def plus_link_count(
-    type: str
+@mbti_router.post("/share", status_code=status.HTTP_204_NO_CONTENT, tags=['share'])
+async def plus_share_count(
+    type_id: int,
+    db: Session = Depends(get_db)
 ):
-    for share in share_list:
-        if share.type == type:
-            share.count += 1
-            return {'datail': 'Done'}
+    db.query(DbMBTI).filter(DbMBTI.id == type_id).update(
+                values = {
+                    "type": DbMBTI.type,
+                    "summary": DbMBTI.summary,
+                    "description": DbMBTI.description,
+                    "testcount": DbMBTI.testcount,
+                    "sharecount": DbMBTI.sharecount + 1
+                }
+    )
+    db.commit()
+    
+    return 
 
 
-@mbti_router.get("/share/{type}")
+@mbti_router.get("/share/{type}", response_model=ShowShareCount, tags=['share'])
 async def get_sharecount(
-    type: str
+    type_id: int,
+    db: Session = Depends(get_db)
 ):
-    for share in share_list:
-        if share.type == type:
-            return {"detail": share.count}
+    return db.query(DbMBTI).filter(DbMBTI.id == type_id).first()
 
 
-@mbti_router.post("/test/result", response_model=ShowMBTI)
-async def mbti_result(choice: Choice):
-    return mbti[get_mbti(choice)]
+@mbti_router.post("/test/result", response_model=ShowMBTI, status_code=status.HTTP_201_CREATED, tags=['mbti'])
+async def mbti_result(
+    request: Choice,
+    db: Session = Depends(get_db)
+):
+    type_id = get_mbti(request.choices)
+    query = db.query(DbMBTI).filter(DbMBTI.id == type_id)
+    
+    query.update(
+        values = {
+            "type": DbMBTI.type,
+            "summary": DbMBTI.summary,
+            "description": DbMBTI.description,
+            "testcount": DbMBTI.testcount+ 1,
+            "sharecount": DbMBTI.sharecount
+        }
+    )
+    db.commit()
+    
+    return query.first()
+
+
+@mbti_router.post('/mbti/create', response_model=ShowMBTI, status_code=status.HTTP_201_CREATED, tags=['root'])
+async def create_mbti(
+    request: MBTI,
+    db: Session = Depends(get_db)
+):
+    new_mbti = DbMBTI(
+        type = request.type,
+        summary = request.summary,
+        description = request.description
+    )
+    
+    db.add(new_mbti)
+    db.commit()
+    db.refresh(new_mbti)
+    
+    return new_mbti
+
+
+@mbti_router.get('/mbti', response_model=List[ShowMBTI], tags=['mbti'])
+async def show_all_mbti(
+    db: Session = Depends(get_db)
+):
+    return db.query(DbMBTI).all()

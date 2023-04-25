@@ -9,31 +9,27 @@ class MBTI(BaseModel):
     type: str
     summary: str
     description: str
-    count: int    
-
-
-class ShowMBTI(MBTI):
-    type: str
-    summary: str
-    description: str
     
     class Config:
         orm_mode = True
         
         schema_extra = {
-                "example": {
-                    "type" : "씨앗방 지박령",
-                    "summary": "쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
-                    "description": "설명"
-                }
+            "example": {
+                "type" : "씨앗방 지박령",
+                "summary": "쏘마 센터는 내가 지킨다! 씨앗방에 뿌리내린 열혈개발자",
+                "description": "설명" 
+            }
         }
-        
-        error_msg_templates = {}
+    
+
+class ShowMBTI(MBTI):
+    id: int
     
     
 class ShowTestCount(BaseModel):
+    id: int
     type: str
-    count: int
+    testcount: int
     
     class Config:
         orm_mode = True
@@ -44,13 +40,12 @@ class ShowTestCount(BaseModel):
                 "testcount": "1"
             }
         }
-        
-        error_msg_templates = {}
 
 
 class ShowShareCount(BaseModel):
+    id: int
     type: str
-    count: int
+    sharecount: int
     
     class Config:
         orm_mode = True
@@ -73,6 +68,7 @@ class Choice(BaseModel):
         
         schema_extra = {
             "example": {
-                "choices" : "[0,1,0,1,1,0,0,1,1]"
+                "choices" : [0,1,0,1,1,0,0,1,1]
             }
         }
+    
