@@ -43,7 +43,6 @@ async def mbti_result(
     query.update(
         values = {
             "type": DbMBTI.type,
-            "summary": DbMBTI.summary,
             "description": DbMBTI.description,
             "testcount": DbMBTI.testcount+ 1,
             "sharecount": DbMBTI.sharecount
@@ -63,7 +62,6 @@ async def plus_share_count(
     db.query(DbMBTI).filter(DbMBTI.id == type_id).update(
                 values = {
                     "type": DbMBTI.type,
-                    "summary": DbMBTI.summary,
                     "description": DbMBTI.description,
                     "testcount": DbMBTI.testcount,
                     "sharecount": DbMBTI.sharecount + 1

@@ -7,9 +7,6 @@ from routers import comment_router, mbti_router
 description = """
 미니 프로젝트 🚀
 
-노션 명세서를 참고하였습니다.  
-_<a href="https://www.notion.so/d665a407d3c64728857bbcda2641553f?pvs=4"> 간이 명세서 노션 링크</a>_
-
 ## MBTI
 
  - 모든 유형의 검사횟수를 조회하거나 각 유형의 검사횟수 조회  
@@ -19,17 +16,7 @@ _<a href="https://www.notion.so/d665a407d3c64728857bbcda2641553f?pvs=4"> 간이 
  
  ### MBTI table
  
-|id|유형|
-|:---:|:---:|
-|1|씨앗방 지박령|
-|2|아이디어 자동생성기|
-|3|고독한 천재개발자|
-|4|기술스택 스펀지밥|
-|5|ㅋㅋ인간 레드불|
-|6|챗봇 커뮤니케이터|
-|7|얼리버드|
-|8|고객 독심술사|
-|9|잔디 개발자|
+<img src='https://user-images.githubusercontent.com/103489171/234359816-42d46360-a9f0-450e-bd42-e80f15ae37a2.png'>
 
 ## Comment
 
@@ -41,7 +28,7 @@ _<a href="https://www.notion.so/d665a407d3c64728857bbcda2641553f?pvs=4"> 간이 
 app = FastAPI(
     description=description
 )
-
+ 
 
 app.include_router(router=mbti_router)
 app.include_router(router=comment_router)

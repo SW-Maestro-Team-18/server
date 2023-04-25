@@ -16,15 +16,12 @@ comment_router = APIRouter(
 )
 
 
-pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
 @comment_router.post('/new', response_model=ShowComment, status_code=status.HTTP_201_CREATED)
 async def create_comment(
     request: CommentCreate,
     db: Session = Depends(get_db)
 ):
-    hashed_password = pwd_cxt.bcrypt(request.password)
+    hashed_password = Hash.bcrypt(request.password)
     
     new_comment = DbComment(
         type_id = request.type_id,
@@ -39,21 +36,21 @@ async def create_comment(
     return new_comment
 
 
-@comment_router.delete('/delete', status_code=status.HTTP_400_BAD_REQUEST)
+@comment_router.delete('/delete', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_comment_by_id(
     request: CommentDelete,
     db: Session = Depends(get_db)
 ):
     q = db.query(DbComment).filter(DbComment.id == request.id)
+    if not q.first():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail='No requested comment.')
+    
     hashed = q.first().password
-
-    if not pwd_cxt.verify(hashed, request.password):
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail='Wrong password')
+    if not Hash.verify(request.password, hashed):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail='Wrong password.')
     
     q.delete()
     db.commit()
-    
-    return
 
 
 @comment_router.get('/all', response_model=List[ShowComment])
