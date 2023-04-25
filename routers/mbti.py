@@ -72,7 +72,7 @@ async def plus_share_count(
     return 
 
 
-@mbti_router.get("/share/{type}", response_model=ShowShareCount, tags=['share'])
+@mbti_router.get("/share/{type_id}", response_model=ShowShareCount, tags=['share'])
 async def get_sharecount(
     type_id: int,
     db: Session = Depends(get_db)
