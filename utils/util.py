@@ -35,8 +35,12 @@ choice_score = [
         [0,0,2,0,1,0,0,0,3],
         [1,0,0,2,0,0,1,0,0],
         [0,2,0,0,0,0,0,2,0]
+    ],
+    [
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0]
     ]
-
 ]
 
 
@@ -51,8 +55,8 @@ def get_mbti(choices: List[int]) -> int:
     max_score = max(mbti_score)
     max_score_index = mbti_score.index(max_score)
 
-    return max_score_index
+    return max_score_index+1
 
 
 if __name__ == "__main__":
-    print(get_mbti([0,1,0,1,1,0,0,1,1]))
+    print(get_mbti([0,0,0,0,1,1,0,1,0]))
